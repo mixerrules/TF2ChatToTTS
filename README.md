@@ -37,7 +37,7 @@ deno --unstable run --allow-ffi --allow-net --allow-env --allow-write --allow-re
 ```
 
 ## How to get More TTS voices:
-You can change the TTS voice using the windows built-in voices, you can get more voices here: [Open Settings](ms-settings:speech).
+You can change the TTS voice using the windows built-in voices, go to this url in your browser: ms-settings:speech
 
 
 ## Known issues:
