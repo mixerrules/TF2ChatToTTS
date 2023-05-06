@@ -3,13 +3,18 @@ TF2 Chat To TTS is an exteneral script/app, made using TypeScript and Deno, that
 
 (THIS SHOULD ALSO WORK FOR ANY SOURCE GAME BUT I HAVE ONLY TESTED IT WITH Team Fortress 2)
 
-### How to get More TTS voices:
-You can change the TTS voice using the windows built-in voices, you can get more voices here: [Open Settings](ms-settings:speech).
-
 ## Requirements:
 *Note*: there are no compiled binaries due to Deno [not supporting the compiling of NPM & Node packages](https://github.com/denoland/deno/issues/15960), so it will have to be started by command line or a bat file.
 - [Deno](https://deno.com/manual@v1.33.2/getting_started/installation) 
 
+## Features:
+- Team Only mode
+- Filter Out "Trade Chat"
+- Swear Filter:
+  - None (no filter)
+  - Light (slurs and extremes)
+  - Heavy (Filters Everything basically)
+- Ability to change TTS voice
 
 ## TF2 Setup:
 - Open Steam
@@ -29,6 +34,10 @@ You can change the TTS voice using the windows built-in voices, you can get more
 ```
 deno --unstable run --allow-ffi --allow-net --allow-env --allow-write --allow-read --allow-run app.ts 
 ```
+
+## How to get More TTS voices:
+You can change the TTS voice using the windows built-in voices, you can get more voices here: [Open Settings](ms-settings:speech).
+
 
 ## Known issues:
 - App does not close if you just close the TTS window. (Click CTRL + C in cmd or terminal to end it.)
