@@ -14,7 +14,8 @@ TF2 Chat To TTS is an exteneral script/app, made using TypeScript and Deno, that
   - None (no filter)
   - Light (slurs and extremes)
   - Heavy (Filters Everything basically)
-- Ability to change TTS voice
+- Changable TTS Voice
+- Disable the reading of names
 
 ## TF2 Setup:
 - Open Steam
