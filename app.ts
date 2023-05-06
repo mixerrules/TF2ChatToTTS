@@ -2,19 +2,22 @@ import { sleep } from "https://deno.land/x/sleep@v1.2.1/mod.ts";
 import { retry } from "https://deno.land/x/retry@v2.0.0/mod.ts";
 import { findTF2Location, getSettings } from "./utils.ts";
 
-const filename = "D:\\SteamLibrary\\steamapps\\common\\Team Fortress 2\\tf\\tf2sm.log";
-
 const settingsJson = await getSettings();
 
 let tf2path = await findTF2Location() + ""
 tf2path = tf2path.replace("\\\\", "\\\\\\")
 
-const fullLogPath = tf2path + "\\tf\\" + settingsJson.consoleLogFile + ".log"
+const fullLogPath = tf2path + "tf\\" + settingsJson.consoleLogFile + ".log"
 
 // Cleans log file on start
-const file = await Deno.open(fullLogPath, { write: true });
-await file.truncate(0);
-file.close();
+try {
+ const file = await Deno.open(fullLogPath, { write: true });
+ await file.truncate(0);
+ file.close();
+} catch (e) {
+	console.log("Log file does not exist yet");
+}
+
 
 // Starts TF2 is its enabled in the settings.
 if (settingsJson.autoStart == "true") {
@@ -79,11 +82,11 @@ ws.onclose = () => console.log("Disconnected from server");
 await sleep(5)
 let lastSize = 0;
 while (true) {
-    const fileInfo = await Deno.stat(filename);
+    const fileInfo = await Deno.stat(fullLogPath);
     const currentSize = fileInfo.size;
 
     if (currentSize > lastSize) {
-        const file = await Deno.open(filename);
+        const file = await Deno.open(fullLogPath);
         await file.seek(lastSize, Deno.SeekMode.Start);
 
         const buffer = new Uint8Array(currentSize - lastSize);
