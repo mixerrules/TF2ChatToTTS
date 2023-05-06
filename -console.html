@@ -1,0 +1,299 @@
+<html>
+
+<head>
+    <style>
+        hr {
+            height: 12px;
+            border: 0;
+            box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        select {
+            width: 100%;
+            overflow: hidden;
+            white-space: pre;
+            text-overflow: ellipsis;
+            -webkit-appearance: none;
+        }
+    </style>
+    <script>
+        const socket = new WebSocket('ws://localhost:8000/wss');
+
+        socket.addEventListener('close', function (event) {
+            console.log('Server closed connection' + event.data);
+        });
+        socket.addEventListener('error', function (event) {
+            console.log('Server closed connection' + event);
+        });
+    </script>
+</head>
+
+<body style="min-width: 90%;margin: 10px;margin-right: 12px;overflow:hidden;background:black;">
+    <div id="log"
+        style="border-style: solid;min-height:75%;max-height:75%;overflow:auto;background:rgb(151, 150, 150);">
+
+        <br>
+    </div>
+    <div style="margin-top:5px;border-style:solid;min-height:20%;max-height:20%;overflow:auto;padding:20px;display:flex;justify-content: center;align-items: center;wrap:flex;background:rgb(151, 150, 150);"
+        id="options">
+        <span style="width:14%;height:100%;">
+            <center>Name Filter: <span id="names">Disabled</span><br><button type="button"
+                    onclick="toggleNames()">Toggle Name Reading</button></center>
+        </span>
+        <span style="width:14%;height:100%;">
+            <center>Teams Filter: <span id="teams">Disabled</span><br><button type="button"
+                    onclick="toggleTeam()">Toggle Team Only Messages</button></center>
+        </span>
+        <span style="width:14%;height:100%;">
+            <center>Trade Filter: <span id="trades">Disabled</span><br><button type="button"
+                    onclick="toggleTrades()">Toggle Trade
+                    Message</button></center>
+        </span>
+        <span style="width:14%;height:100%;">
+            <center>Commands: <span id="commands">Disabled</span><br><button type="button"
+                    onclick="toggleCommands()">Toggle Commands Messages</button></center>
+        </span>
+        <span style="width:14%;height:100%;">
+            <center>Swear Filter: <span id="censor">Disabled</span><br><span id="swear">
+                    <button type="button" onclick="setSwearLevel('none')" style="width: 25%">None</button>
+                    <button type="button" onclick="setSwearLevel('light')" style="width: 25%">Light</button>
+                    <button type="button" onclick="setSwearLevel('heavy')" style="width: 25%">Heavy</button>
+            </center>
+        </span>
+        <span style="width:14%;height:100%;"><span id="voice">Select a voice: </span><br><select id="selectVoice">
+                <option value="">--Select a voice--</option>
+            </select>
+        </span>
+        </center>
+    </div>
+</body>
+<script>
+    const synth = window.speechSynthesis;
+
+    let teamsDisabled = false;
+    let namesDisabled = false;
+    let tradesDisabled = false;
+    let commandDisabled = false;
+    let swearFilter = "light";
+
+    function toggleNames() {
+        namesDisabled = !namesDisabled;
+        console.log('Name Status:', namesDisabled);
+        let status = document.getElementById("names");
+
+        if (namesDisabled) {
+            status.innerHTML = "Enabled";
+            status.style.color = "green";
+        } else {
+            status.innerHTML = "Disabled";
+            status.style.color = "red";
+        }
+    }
+
+    function toggleTrades() {
+        tradesDisabled = !tradesDisabled;
+        console.log('Trade Status:', tradesDisabled);
+        let status = document.getElementById("trades")
+
+        if (tradesDisabled) {
+            status.innerHTML = "Enabled";
+            status.style.color = "green";
+        } else {
+            status.innerHTML = "Disabled";
+            status.style.color = "red";
+        }
+    }
+
+    function toggleTeam() {
+        teamsDisabled = !teamsDisabled;
+        console.log('Team Status:', teamsDisabled);
+        let status = document.getElementById("teams")
+
+        if (teamsDisabled) {
+            status.innerHTML = "Enabled";
+            status.style.color = "green";
+        } else {
+            status.innerHTML = "Disabled";
+            status.style.color = "red";
+        }
+    }
+
+    function toggleCommands() {
+        commandDisabled = !commandDisabled;
+        console.log('Commands Status:', commandDisabled);
+        let status = document.getElementById("commands")
+        if (commandDisabled) {
+            status.innerHTML = "Enabled";
+            status.style.color = "green";
+        } else {
+            status.innerHTML = "Disabled";
+            status.style.color = "red";
+        }
+
+    }
+
+    function setSwearLevel(level) {
+        let status = document.getElementById("censor");
+        console.log("set 'setSwearLevel' to: " + level)
+        switch (level) {
+            case "none":
+                status.innerHTML = "None"
+                status.style.color = "red";
+                break;
+            case "light":
+                status.innerHTML = "Light"
+                status.style.color = "lightgreen";
+                break;
+            case "heavy":
+                status.innerHTML = "HEAVY"
+                status.style.color = "#00FF00";
+                break;
+            default:
+                status.innerHTML = "SOMEONE BROKE SOMETHING BLAME MIXER"
+                status.style.color = "red";
+                break;
+        }
+
+    }
+
+    socket.addEventListener('message', function (event) {
+        console.log('Line received: ', event.data);
+
+        // Setts 
+        let horRule = document.createElement("hr");
+        let newSpan = document.createElement("span");
+        let lineBreak = document.createElement("br");
+
+        // Adds Full log and BR
+        if (event.data = "TF2 Chat To TTS started") {
+            newSpan.innerHTML = event.data;
+            document.getElementById("log").appendChild(newSpan);
+            document.getElementById("log").appendChild(lineBreak);
+            document.getElementById("log").appendChild(horRule);
+            document.getElementById("log").lastChild.scrollIntoView();
+        } else {
+            newSpan.innerHTML = event.data;
+            document.getElementById("log").appendChild(newSpan);
+            document.getElementById("log").appendChild(lineBreak);
+            document.getElementById("log").appendChild(horRule);
+            document.getElementById("log").lastChild.scrollIntoView();
+        }
+
+        let finalOutPut = event.data;
+        if (teamsDisabled) {
+            if (event.data.includes("(TEAM)")) {
+                finalOutPut = event.data
+            } else {
+                finalOutPut = "-";
+            }
+        }
+
+        if (namesDisabled) {
+            try {
+                finalOutPut = finalOutPut.split(':')[1]
+            } catch (e) {
+
+            }
+        }
+
+        if (tradesDisabled) {
+
+            const filteredPhrases = ['trade', 'trading', 'free', 'buying', 'selling', `\[S\]`, `\{S\}`, `\[B\]`, `overpay`, `keys`, `key`, `quicksell`, `Selling`, `Buying`, `Prices`, `refined`, `scrap`, `REFINED`, `s>`, `scrap`, `offers`, `offering`, `offer`];
+            let message;
+            try {
+                console.log
+                message = finalOutPut.split(':')[1].toLowerCase();
+            } catch (e) {
+                try {
+                    console.log(finalOutPut)
+                    message = finalOutPut.toLowerCase();
+                } catch (e) {
+                    // console.log(e)
+                }
+            }
+            if (message != undefined) {
+                if (!filteredPhrases.some(substring => message.includes(substring.toLowerCase()))) {
+                    finalOutPut = finalOutPut;
+                } else {
+                    finalOutPut = " "
+                }
+            } else {
+                finalOutPut = " "
+            }
+
+        }
+
+        if (commandDisabled) {
+            if (/[\!||\/][\+a-zA-Z]+/.test(finalOutPut)) {
+                finalOutPut = " "
+            }
+        }
+
+        if (swearFilter == "light") {
+            // Only removes slurs words
+            const lightModeList = ["nigger", "fagget", "faggot", "fag", "nigga", "retard", "kike", "Jigaboo", "Nignog", "niggar", "negro", "nerger", "nigar", "spick", "spic", "Tar Baby", "Tar-Baby", "Tar Baby", "Wigger"]
+            if (lightModeList.some(substring => finalOutPut.includes(substring.toLowerCase()))) {
+                const firstLetter = substring.charAt(0);
+                const asterisks = "*".repeat(str.length - 1);
+                const result = firstLetter + asterisks;
+                finalOutPut = finalOutPut.replace(substring, result)
+            }
+        }
+
+        if (swearFilter == "heavy") {
+            // Only removes slurs words
+            const heavyModeList = ["piss", "slut", "whore", "twat", "prick", "horseshit", "cunt", "cock sucker", "cock", "fucker", "motherfucker", "cunt", "fag", "queer", "pussy", "shitting", "shittin", "shit", "fuckin", "Ass hole", "fucking", "fuck", "dick", "Dickhead", "Bitch", "Bastard", "Asshole", "nigger", "fagget", "faggot", "fag", "nigga", "retard", "kike", "Jigaboo", "Nignog", "niggar", "negro", "nerger", "nigar", "spick", "spic", "Tar Baby", "Tar-Baby", "Tar Baby", "Wigger"]
+            if (lightModeList.some(substring => finalOutPut.includes(substring.toLowerCase()))) {
+                const firstLetter = substring.charAt(0);
+                const asterisks = "*".repeat(str.length - 1);
+                const result = firstLetter + asterisks;
+                finalOutPut = finalOutPut.replace(substring, result)
+            }
+        }
+
+        const utterThis = new SpeechSynthesisUtterance(finalOutPut);
+
+        // select voice
+
+        if (selectedVoice != undefined) {
+            utterThis.voice = selectedVoice
+        }
+
+        synth.speak(utterThis) // This reads out the text
+    });
+
+</script>
+<script>
+    let voices = [];
+    const select = document.getElementById('selectVoice');
+    let selectedVoice;
+
+    window.speechSynthesis.onvoiceschanged = async function () {
+        voices = await window.speechSynthesis.getVoices();
+        for (let i = 0; i < voices.length; i++) {
+            let option = document.createElement('option');
+            option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+            option.value = i;
+            select.appendChild(option);
+        }
+
+        // Add "Get more voices" option
+        let moreVoicesOption = document.createElement('option');
+        moreVoicesOption.textContent = 'Get more voices...';
+        select.appendChild(moreVoicesOption);
+
+        select.addEventListener('change', function () {
+            console.log(this.value)
+            selectedVoice = voices[this.value];
+            if (this.value === '') {
+                selectedVoice = null;
+            } else if (this.value == "Get more voices...") {
+                window.open('ms-settings:speech', '_blank');
+            }
+        });
+    };
+
+
+</script>
+
+</html>
