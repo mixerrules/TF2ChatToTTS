@@ -17,6 +17,10 @@ TF2 Chat To TTS is an exteneral script/app, made using TypeScript and Deno, that
 - Changable TTS Voice
 - Disable the reading of names
 
+## screenshots: 
+![alt text](https://mixerrules.me/cdn/tf2chattospeech.png "Screenshot1")
+
+
 ## TF2 Setup:
 - Open Steam
 - Find Team Fortress 2 In your library
@@ -38,7 +42,6 @@ deno --unstable run --allow-ffi --allow-net --allow-env --allow-write --allow-re
 
 ## How to get More TTS voices:
 You can change the TTS voice using the windows built-in voices, go to this url in your browser: ms-settings:speech
-
 
 ## Known issues:
 - App does not close if you just close the TTS window. (Click CTRL + C in cmd or terminal to end it.)
