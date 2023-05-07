@@ -37,7 +37,7 @@ TF2 Chat To TTS is an exteneral script/app, made using TypeScript and Deno, that
 - Open the folder in Terminal or CMD.
 - Start the TTS using the Line: 
 ```
-deno --unstable run --allow-ffi --allow-net --allow-env --allow-write --allow-read --allow-run app.ts 
+deno --unstable run --allow-ffi --allow-net --allow-write --allow-read --allow-run app.ts 
 ```
 
 ## How to get More TTS voices:
@@ -46,3 +46,8 @@ You can change the TTS voice using the windows built-in voices, go to this url i
 ## Known issues:
 - (Possibly Fixed) Sometimes when starting the app it will crash with a "Not Ready State" error, run it again it should fix itself.
 - Some languages may not get printed out by the TTS (blame javascript)
+
+## Future roadmap:
+- redo basically all of the tts window layout
+- compile into an exe when NPM is supported by deno
+- allow players to have a different voice than default (set by user)
