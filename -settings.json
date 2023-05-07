@@ -1,5 +1,6 @@
 {
-    "version": "0.0.1",
+    "version": "0.0.3",
     "consoleLogFile": "ttslog",
-    "autoStart": "false"
+    "autoStart": "false",
+    "debugMode": "false"
 }

@@ -14,7 +14,6 @@ router.get("/wss", (ctx) => {
     ws.send("TF2 Chat To TTS started");
   };
   ws.onmessage = (m) => {
-    console.log("Got message from client: ", m.data);
     // Broadcast message to all connected clients
     for (const client of sockets) {
       client.send(m.data + "");
