@@ -18,6 +18,7 @@ try {
     console.log("Log file does not exist yet");
 }
 
+// Dev Mode/Debug info
 console.log("[%cTF2 Chat To TTS%c] %cStarted Version: " + settingsJson.version, "color: #4441FF", "color: white", "color: green")
 if (settingsJson.debugMode) {
     console.log("[%cTF2 Chat To TTS%c] %cStarted in Dev Mode. ", "color: #4441FF", "color: white", "color: orange")
@@ -47,7 +48,7 @@ async function checkTF2Status() {
     const outStr = new TextDecoder().decode(output);
 
     if (settingsJson.debugMode) {
-     console.log(outStr)
+        console.log(outStr)
     }
 
     const lines = outStr.toString().split("\n");
@@ -55,7 +56,7 @@ async function checkTF2Status() {
         const parts = line.split("=");
 
         if (settingsJson.debugMode) {
-         console.log(parts)
+            console.log(parts)
         }
 
         parts.forEach(function (items) {
@@ -92,9 +93,30 @@ const wsWorker = new Worker(new URL("./ws.ts", import.meta.url).href, { type: "m
 
 // connects to the websocket
 const ws = new WebSocket("ws://localhost:8000/wss");
-ws.onopen = () => console.log("Connected to server");
-ws.onmessage = (message) => console.log("Message sent to TTS: \n" + message.data);
-ws.onclose = () => console.log("Disconnected from server");
+ws.onopen = () => console.log("[%cWebSocket%c] %cTTS Passer Connected", "color: #48066F", "color: white", "color: #B79E79", "color: white")
+ws.onmessage = (message) => console.log("[%cWebSocket%c] %cData Sent To TTS:\n%c" + message.data, "color: #48066F", "color: white", "color: #B79E79", "color: white");
+ws.onclose = () => { Deno.exit(); }
+
+// Update checking function
+await sleep(10)
+checkVersion()
+setInterval(checkVersion, 90000);
+async function checkVersion() {
+    const url = 'https://raw.githubusercontent.com/mixerrules/TF2ChatToTTS/main/-settings.json';
+    const response = await fetch(url);
+    const data = await response.json();
+    const localData = settingsJson;
+    if (data.version !== localData.version) {
+        console.log("[%cTF2 Chat To TTS%c] %cYou are using version " + settingsJson.version + ", Current version is " + data.version, "color: #4441FF", "color: white", "color: orange")
+        console.log("[%cTF2 Chat To TTS%c] %cYou can download the new update from: %chttps://github.com/mixerrules/TF2ChatToTTS/releases", "color: #4441FF", "color: white", "color: orange", "color: blue")
+        ws.send("There is an update available for TF2 Chat To TTS, we recommend you upgrade from our GitHub.")
+    } else {
+        if (settingsJson.debugMode) {
+            console.log('Versions are the same');
+        }
+    }
+}
+
 
 // looks for changes in the log file then
 // sends the chat lines to the socket
