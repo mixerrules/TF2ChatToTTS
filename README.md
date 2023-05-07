@@ -44,6 +44,5 @@ deno --unstable run --allow-ffi --allow-net --allow-env --allow-write --allow-re
 You can change the TTS voice using the windows built-in voices, go to this url in your browser: ms-settings:speech
 
 ## Known issues:
-- App does not close if you just close the TTS window. (Click CTRL + C in cmd or terminal to end it.)
-- Sometimes when starting the app it will crash with a "Not Ready State" error, run it again it should fix itself.
+- (Possibly Fixed) Sometimes when starting the app it will crash with a "Not Ready State" error, run it again it should fix itself.
 - Some languages may not get printed out by the TTS (blame javascript)
