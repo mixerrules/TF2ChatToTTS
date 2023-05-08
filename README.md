@@ -1,11 +1,7 @@
 # TF2ChatToTTS
 TF2 Chat To TTS is an exteneral script/app, made using TypeScript and Deno, that reads from a TF2 Log File and prints out any chat messages. *Note:* This is tested and built for windows since it relys on Microsoft TTS voices.
 
-(THIS SHOULD ALSO WORK FOR ANY SOURCE GAME BUT I HAVE ONLY TESTED IT WITH Team Fortress 2)
-
-## Requirements:
-*Note*: there are no compiled binaries due to Deno [not supporting the compiling of NPM & Node packages](https://github.com/denoland/deno/issues/15960), so it will have to be started by command line or a bat file.
-- [Deno](https://deno.com/manual@v1.33.2/getting_started/installation) 
+(THIS SHOULD ALSO WORK FOR ANY SOURCE GAME BUT I HAVE ONLY TESTED IT WITH Team Fortress 2) 
 
 ## Features:
 - Team Only mode
@@ -20,6 +16,9 @@ TF2 Chat To TTS is an exteneral script/app, made using TypeScript and Deno, that
 ## screenshots: 
 ![alt text](https://mixerrules.me/cdn/tf2chattospeech.png "Screenshot1")
 
+## Requirements:
+*Note*: there are no compiled binaries due to Deno [not supporting the compiling of NPM & Node packages](https://github.com/denoland/deno/issues/15960), so it will have to be started by command line or a bat file.
+- [Deno](https://deno.com/manual@v1.33.2/getting_started/installation)
 
 ## TF2 Setup:
 - Open Steam
