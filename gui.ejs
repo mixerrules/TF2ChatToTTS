@@ -25,6 +25,13 @@
         socket.addEventListener('error', function (event) {
             console.log('Server closed connection' + event);
         });
+
+        let tradewords = [<%- tradewords %>];
+        let lightwords = [<%- lightwords %>];
+        let heavywords = [<%- heavywords %>];
+
+        console.log(tradewords);
+
     </script>
 </head>
 
@@ -34,7 +41,7 @@
 
         <br>
     </div>
-    <div style="margin-top:5px;border-style:solid;min-height:20%;max-height:20%;overflow:auto;padding:20px;display:flex;justify-content: center;align-items: center;wrap:flex;background:rgb(151, 150, 150);"
+    <div style="margin-top:5px;border-style:solid;min-height:20%;max-height:20%;overflow:auto;padding:20px;display:flex;justify-content: center;align-items: center;wrapc:flex;background:rgb(151, 150, 150);"
         id="options">
         <span style="width:14%;height:100%;">
             <center>Name Filter: <span id="names">Disabled</span><br><button type="button"
@@ -74,7 +81,7 @@
     let namesDisabled = false;
     let tradesDisabled = false;
     let commandDisabled = false;
-    let swearFilter = "light";
+    let swearFilter = "none";
 
     function toggleNames() {
         namesDisabled = !namesDisabled;
@@ -198,7 +205,7 @@
 
         if (tradesDisabled) {
 
-            const filteredPhrases = ['trade', 'trading', 'free', 'buying', 'selling', `\[S\]`, `\{S\}`, `\[B\]`, `overpay`, `keys`, `key`, `quicksell`, `Selling`, `Buying`, `Prices`, `refined`, `scrap`, `REFINED`, `s>`, `scrap`, `offers`, `offering`, `offer`];
+            const filteredPhrases = tradewords;
             let message;
             try {
                 console.log
@@ -231,7 +238,7 @@
 
         if (swearFilter == "light") {
             // Only removes slurs words
-            const lightModeList = ["nigger", "fagget", "faggot", "fag", "nigga", "retard", "kike", "Jigaboo", "Nignog", "niggar", "negro", "nerger", "nigar", "spick", "spic", "Tar Baby", "Tar-Baby", "Tar Baby", "Wigger"]
+            const lightModeList = lightwords;
             if (lightModeList.some(substring => finalOutPut.includes(substring.toLowerCase()))) {
                 const firstLetter = substring.charAt(0);
                 const asterisks = "*".repeat(str.length - 1);
@@ -242,7 +249,7 @@
 
         if (swearFilter == "heavy") {
             // Only removes slurs words
-            const heavyModeList = ["piss", "slut", "whore", "twat", "prick", "horseshit", "cunt", "cock sucker", "cock", "fucker", "motherfucker", "cunt", "fag", "queer", "pussy", "shitting", "shittin", "shit", "fuckin", "Ass hole", "fucking", "fuck", "dick", "Dickhead", "Bitch", "Bastard", "Asshole", "nigger", "fagget", "faggot", "fag", "nigga", "retard", "kike", "Jigaboo", "Nignog", "niggar", "negro", "nerger", "nigar", "spick", "spic", "Tar Baby", "Tar-Baby", "Tar Baby", "Wigger"]
+            const heavyModeList = heavywords;
             if (lightModeList.some(substring => finalOutPut.includes(substring.toLowerCase()))) {
                 const firstLetter = substring.charAt(0);
                 const asterisks = "*".repeat(str.length - 1);
@@ -288,7 +295,7 @@
             if (this.value === '') {
                 selectedVoice = null;
             } else if (this.value == "Get more voices...") {
-                window.open('ms-settings:speech', '_blank');
+                window.open('ms-settings:speech');
             }
         });
     };

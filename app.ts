@@ -1,6 +1,6 @@
+// deno-lint-ignore-file no-unused-vars
 import { sleep } from "https://deno.land/x/sleep@v1.2.1/mod.ts";
-import { retry } from "https://deno.land/x/retry@v2.0.0/mod.ts";
-import { findTF2Location, getSettings } from "./utils.ts";
+import { findTF2Location, getArrayFromFile, getSettings } from "./utils.ts";
 
 const settingsJson = await getSettings();
 
@@ -14,7 +14,7 @@ try {
     const file = await Deno.open(fullLogPath, { write: true });
     await file.truncate(0);
     file.close();
-} catch (e) {
+} catch (_e) {
     console.log("Log file does not exist yet");
 }
 
@@ -26,7 +26,7 @@ if (settingsJson.debugMode) {
 
 // Starts TF2 is its enabled in the settings.
 if (settingsJson.autoStart == "true") {
-    const tf2process = Deno.run({ cmd: ["cmd", "/c", `C:\\"Program Files (x86)"\\Steam\\steam.exe -applaunch 440`, "exit"] })
+    const _tf2process = Deno.run({ cmd: ["cmd", "/c", `C:\\"Program Files (x86)"\\Steam\\steam.exe -applaunch 440`, "exit"] })
     console.log("[%cTF2 Auto Start%c] %cStarting TF2.. ", "color: orange", "color: white", "color: yellow")
 }
 
@@ -87,13 +87,13 @@ async function checkTF2Status() {
 }
 
 // Worker for the WebView and Sockets
-const wvWorker = new Worker(new URL("./gui.ts", import.meta.url).href, { type: "module" });
-const wsWorker = new Worker(new URL("./ws.ts", import.meta.url).href, { type: "module" });
+const _wvWorker = new Worker(new URL("./gui.ts", import.meta.url).href, { type: "module" });
+const _wsWorker = new Worker(new URL("./ws.ts", import.meta.url).href, { type: "module" });
 
 
 // connects to the websocket
 const ws = new WebSocket("ws://localhost:8000/wss");
-ws.onopen = () => console.log("[%cWebSocket%c] %cTTS Passer Connected", "color: #48066F", "color: white", "color: #B79E79", "color: white")
+ws.onopen = () => console.log("[%cWebSocket%c] %cTTS Passer Connected", "color: #48066F", "color: white", "color: #B79E79")
 ws.onmessage = (message) => console.log("[%cWebSocket%c] %cData Sent To TTS:\n%c" + message.data, "color: #48066F", "color: white", "color: #B79E79", "color: white");
 ws.onclose = () => { Deno.exit(); }
 
@@ -107,9 +107,11 @@ async function checkVersion() {
     const data = await response.json();
     const localData = settingsJson;
     if (data.version !== localData.version) {
-        console.log("[%cTF2 Chat To TTS%c] %cYou are using version " + settingsJson.version + ", Current version is " + data.version, "color: #4441FF", "color: white", "color: orange")
-        console.log("[%cTF2 Chat To TTS%c] %cYou can download the new update from: %chttps://github.com/mixerrules/TF2ChatToTTS/releases", "color: #4441FF", "color: white", "color: orange", "color: blue")
-        ws.send("There is an update available for TF2 Chat To TTS, we recommend you upgrade from our GitHub.")
+        if (settingsJson.updateMessage) {
+            console.log("[%cTF2 Chat To TTS%c] %cYou are using version " + settingsJson.version + ", Current version is " + data.version, "color: #4441FF", "color: white", "color: orange")
+            console.log("[%cTF2 Chat To TTS%c] %cYou can download the new update from: %chttps://github.com/mixerrules/TF2ChatToTTS/releases", "color: #4441FF", "color: white", "color: orange", "color: blue")
+            ws.send("There is an update available for TF2 Chat To TTS, we recommend you upgrade from our GitHub.")
+        }
     } else {
         if (settingsJson.debugMode) {
             console.log('Versions are the same');
@@ -118,9 +120,10 @@ async function checkVersion() {
 }
 
 
+
+await sleep(5)
 // looks for changes in the log file then
 // sends the chat lines to the socket
-await sleep(5)
 let lastSize = 0;
 while (true) {
     const fileInfo = await Deno.stat(fullLogPath);
@@ -139,7 +142,7 @@ while (true) {
         const lines = text.trim().split("\n");
         for (let i = 0; i < lines.length; i++) {
             if (/.*: .*/s.test(lines[i])) {
-                const filteredPhrases = ["CreateEvent", "+tf_econ_item_preview", "JOY_AXIS_", `Requesting texture`, 'Unknown command:', 'Soundscape:', 'R_FindDynamicDecalSlot:', 'TODO:', 'Queued Material System:', '[Cloud]:', 'Host_WriteConfiguration:', 'Steamworks Stats:', 'KeyValues::ParseIncludedKeys:', 'Spawn Server:', 'Network:', 'SV_ActivateServer:', 'Created class baseline:', '[SteamNetworkingSockets] WARNING:', 'SetConVar:', 'Server Number:', 'Build:', 'Players:', 'Map:', 'Particles:', 'Particles:', 'CSoundPatch::Update:', ": can't be found on disk", 'CAsyncWavDataCache', 'Voice_Init', 'Signon traffic "CLIENT"', 'Restoring player view height', 'MoveInstanceHandle', 'Async I/O Force', 'pitch out of bounds', 'Resolved stuck player/player', "Started VScript virtual machine using script language 'Squirrel'", "not found.", "invalid bone array size", ", size", "No such sound", "lobby received", "Disconnect:", "#TF_MM", "CMaterial", "SurfFlagsToSortGroup"];
+                const filteredPhrases = await getArrayFromFile("console")
 
                 if (!filteredPhrases.some(substring => lines[i].includes(substring))) {
                     ws.send(lines[i])
